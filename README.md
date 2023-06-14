@@ -6,7 +6,7 @@ django: Django is a free and open-source, Python-based web framework that follow
 
 - [Advanced Django](#advanced-django)
     - [Form submission without reload](https://github.com/Parvez49/Advanced_Django)
-    - [Analytics](#analytics)
+    - [Django Rest API](https://github.com/Parvez49/Advanced_Django)
     - [Asset Management](#asset-ma
  
 
