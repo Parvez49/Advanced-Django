@@ -8,6 +8,7 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [Form submission without reload](https://github.com/Parvez49/Advanced_Django)
     - [Django Rest API](https://github.com/Parvez49/Advanced_Django)
     - [Model](#Model)
+    - [Query](#Query)
  
 
 
@@ -71,6 +72,51 @@ class Customer(models.Model):
     name = models.CharField(max_length=100)
     tags = models.ManyToManyField(Tag)
 ```
+
+## Query
+```
+all_objects = Model.objects.all()
+limited_objects = Model.objects.all()[:5]
+obj = Model.objects.get(pk=1)
+first_object = Model.objects.first()
+first_object = Model.objects.last()
+filtered_objects = Model.objects.filter(attribute=value) // filter with condition
+excluded_objects = Model.objects.exclude(attribute=value) //filter out objects that match the condition
+filtered_objects = Model.objects.filter(attribute1=value1, attribute2=value2) // AND operation between two condition
+
+from django.db.models import Q
+filtered_objects = Model.objects.filter(Q(attribute1=value1) | Q(attribute2=value2)) // OR operation
+ordered_objects = Model.objects.order_by('field_name')
+
+reversed_objects = Model.objects.reverse()
+distinct_objects = Model.objects.values('field_name').distinct() // to retrieve distinct values of a specific field from the model.
+object_count = Model.objects.count()
+
+// aggregate() function is a dictionary-like object that contains the computed aggregation results.
+max_value = Model.objects.aggregate(max_value=models.Max('field_name'))  // print(max_price['max_price'])
+min_value = Model.objects.aggregate(min_value=models.Min('field_name'))
+total_sum = Model.objects.aggregate(total_sum=models.Sum('field_name'))
+
+// Group objects based on a field
+from django.db.models import Count
+grouped_objects = Model.objects.values('field_name').annotate(count=Count('field_name')) // Count('field_name') aggregation function counts the occurrences of each distinct value in the specified field.
+Sample Output:
+[
+  {'field_name': 'field_name1', 'count': 10},
+  {'field_name': 'field_name2', 'count': 5},
+  {'field_name': 'field_name3', 'count': 8}
+]
+
+
+filtered_objects = Model.objects.filter(attribute__iexact='value') //  Perform case-insensitive filtering: It retrieves all objects where the attribute value is exactly equal to 'value'
+searched_objects = Model.objects.filter(attribute__icontains='value') // Perform a case-insensitive search: It retrieves all objects where the attribute value contains the substring 'value'. it will match 'value', 'SomeValue', 'another_value', and so on. 
+
+```
+
+
+
+
+
 
 
 
