@@ -9,6 +9,7 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [Django Rest API](https://github.com/Parvez49/Advanced_Django)
     - [Model](#Model)
     - [Query](#Query)
+    - [Form](#Form)
  
 
 
@@ -112,7 +113,29 @@ filtered_objects = Model.objects.filter(attribute__iexact='value') //  Perform c
 searched_objects = Model.objects.filter(attribute__icontains='value') // Perform a case-insensitive search: It retrieves all objects where the attribute value contains the substring 'value'. it will match 'value', 'SomeValue', 'another_value', and so on. 
 
 ```
-
+## Form
+```
+from django import forms
+class MyForm(forms.Form):
+    char_field = forms.CharField(max_length=100)
+    integer_field = forms.IntegerField()
+    float_field = forms.FloatField()
+    decimal_field = forms.DecimalField(max_digits=5, decimal_places=2)
+    boolean_field = forms.BooleanField()
+    date_field = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    datetime_field = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+    time_field = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))
+    email_field = forms.EmailField()
+    url_field = forms.URLField()
+    file_field = forms.FileField()
+    image_field = forms.ImageField()
+    choice_field = forms.ChoiceField(choices=[('option1', 'string1'), ('option2', 'string2'),('option3', 'string2'),('option4', 'string2')])
+    multiple_choice_field = forms.MultipleChoiceField(choices=[('option1', 'string1'), ('option2', 'string2'),('option3', 'string2'),('option4', 'string2')])
+    #model_choice_field = forms.ModelChoiceField(queryset=MyModel.objects.all())
+    #model_multiple_choice_field = forms.ModelMultipleChoiceField(queryset=MyModel.objects.all())
+    password_field = forms.CharField(widget=forms.PasswordInput)
+    #regex_field = forms.CharField(validators=[RegexValidator(r'^\d{10}$', 'Enter a 10-digit number.')])
+```
 
 
 
