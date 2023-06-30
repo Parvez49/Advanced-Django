@@ -10,6 +10,9 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [Model](#Model)
     - [Query](#Query)
     - [Form](#Form)
+    - [Social Authentication](#Social-Authentication)
+    - [RequirementFile](#Requirement.txt)
+    - [pip command](#PIP-Command)
  
 
 
@@ -137,9 +140,95 @@ class MyForm(forms.Form):
     #regex_field = forms.CharField(validators=[RegexValidator(r'^\d{10}$', 'Enter a 10-digit number.')])
 ```
 
+## Social Authentication
+## Google
+![goggle_login](https://github.com/Parvez49/Advanced-Django/assets/72366747/c5dbf80d-651b-478d-b63a-b86d5b36f6e3)
 
 
+The Google provider is OAuth2 based.
+Allauth documentation is here: https://django-allauth.readthedocs.io/en/latest/providers.html#google
 
+Django setting:
+```
+ALLOWED_HOSTS = ['127.0.0.1']
+INSTALLED_APPS = [
+        ...
+        'allauth.socialaccount.providers.google',
+        ...
+        ]
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
+```
+Google Developer Console
+https://console.developers.google.com/
+
+Register as new project
+```
+Credential ----> Authorized JavaScript origins ----> http://127.0.0.1:8090
+           ----> Authorized redirect URIs      ----> http://127.0.0.1:8090/accounts/google/login/callback/
+OAuth Consent Screen ----> App information ----> App Name ----> Django Auth App
+                                           ----> User support email ----> parvezhossen81@gmail.com
+                    ----> App domain ----> Application home page ----> http://127.0.0.1:8090/
+                                     ----> Application privacy policy link ----> http://127.0.0.1:8090/privacy/
+                                     ----> Application terms of service link ----> http://127.0.0.1:8090/service/
+```
+Database Setting:
+```
+Django Administration ----> Sites ----> Domain name: 127.0.0.1:8090
+                                  ----> Display Name: localhost
+                      ----> Social applications ----> Provider, Name, Client id, Secret id, sites
+```
+
+## Github
+Allauth documentation is here: https://django-allauth.readthedocs.io/en/latest/providers.html#github
+Django setting:
+```
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'SCOPE': [
+            'user',
+            'repo',
+            'read:org',
+        ],
+    }
+}
+```
+Github Developer Setting
+https://github.com/settings/applications/new
+```
+Credential ----> Authorized JavaScript origins ----> http://127.0.0.1:8090
+           ----> Authorized redirect URIs      ----> http://127.0.0.1:8090/accounts/google/login/callback/
+```
+Database Setting:
+```
+Django Administration ----> Sites ----> Domain name: 127.0.0.1:8090
+                                  ----> Display Name: localhost
+                      ----> Social applications ----> Provider, Name, Client id, Secret id, sites
+```
+
+## Requirement.txt
+This automatically create requirement.txt in project.
+```
+pip freeze > requirements.txt
+```
+## PIP Command
+```
+pip install django-allauth
+pip install --upgrade django-allauth
+pip uninstall django-allauth
+```
 
 
 
