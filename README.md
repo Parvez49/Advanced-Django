@@ -11,6 +11,8 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [Query](#Query)
     - [Form](#Form)
     - [Social Authentication](#Social-Authentication)
+    - [Gmail Validation](#Gmail-Validation)
+    - [Gmail Send](#Gmail-Send)
     - [RequirementFile](#Requirement.txt)
     - [pip command](#PIP-Command)
  
@@ -216,6 +218,54 @@ Database Setting:
 Django Administration ----> Sites ----> Domain name: 127.0.0.1:8090
                                   ----> Display Name: localhost
                       ----> Social applications ----> Provider, Name, Client id, Secret id, sites
+```
+
+## Gmail Validation
+to validate the recipient email to make sure it is valid and active before we try to send an email to it.
+We can use API to valid it. Abstract API also gives this service: https://www.abstractapi.com/guides/django-send-email
+Validation code this api response:
+```
+import requests
+
+api_key = 'ab94318200074509bde56c4e37081464' # https://app.abstractapi.com/api/email-validation
+api_url = 'https://emailvalidation.abstractapi.com/v1/?api_key=' + api_key                                                                                                                                                                               
+
+def validate_email(email):
+    response = requests.get(api_url + f"&email={email}")
+    data = response.json()
+
+    if (
+    data['is_valid_format']['value'] and
+    data['is_mx_found']['value'] and
+    data['is_smtp_valid']['value'] and
+    not data['is_catchall_email']['value'] and
+    not data['is_role_email']['value'] and
+    data['is_free_email']['value']):
+        return True
+    else:
+        return False
+```
+## Gmail Send
+Gmail Account Setting: In https://myaccount.google.com/security, do you see 2-step verification set to ON? If yes, then visiting https://myaccount.google.com/apppasswords should allow you to set up application specific passwords. 
+
+django settings.py:
+```
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = '-----@gmail.com'
+EMAIL_HOST_PASSWORD = "apppasswordsFromGmailAccountSetting"
+```
+Code for sending gmail:
+```
+from django.core.mail import send_mail
+from django.conf import settings
+subject = '____'
+    message = "_________"
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [email]
+    send_mail(subject, message , email_from ,recipient_list )
 ```
 
 ## Requirement.txt
