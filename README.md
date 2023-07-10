@@ -328,10 +328,12 @@ after making these changes, save the pg_hba.conf file and restart the PostgreSQL
 some command:
 ```
 systemctl status postgresql
-systemctl status postgresql.service
-systemctl enable postgresql.service
-systemctl start postgresql.service
-systemctl restart postgresql
+sudo /usr/pgsql-15/bin/postgresql-15-setup initdb
+sudo systemctl enable postgresql-15
+sudo systemctl start postgresql-15
+sudo systemctl stop postgresql-15
+sudo systemctl restart postgresql-15
+
 
 
 
