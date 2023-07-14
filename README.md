@@ -9,6 +9,7 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [Django Rest API](https://github.com/Parvez49/Advanced_Django)
     - [Model](#Model)
     - [Query](#Query)
+        - [select related and prefetch_related](#Select-Related-and-Prefetch-Related)
     - [Form](#Form)
     - [Social Authentication](#Social-Authentication)
     - [Gmail Validation](#Gmail-Validation)
@@ -79,6 +80,92 @@ class Customer(models.Model):
     name = models.CharField(max_length=100)
     tags = models.ManyToManyField(Tag)
 ```
+# Select Related and Prefetch Related 
+Let's assume you have two models: Author and Post, where each Post has a foreign key relationship with an author.
+```
+from django.db import models
+
+class Author(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Post(models.Model):
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
+```
+## select_related: is used to fetch related objects in a single database query by performing a join operation. It follows foreign keys and retrieves the related objects. This method is useful when you know that you will access the related objects and want to minimize database queries.
+```
+# Fetch all posts with their associated authors using select_related
+posts = Post.objects.select_related('author').all()
+
+# Access the author of each post
+for post in posts:
+    print(f"Post: {post.title} by {post.author.name}")
+Output:
+Post: Post 1 by John Doe
+Post: Post 2 by John Doe
+Post: Post 1 by Jane Smith
+Post: Post 2 by Jane Smith
+```
+In this example, select_related('author') retrieves the author information for each post in a single database query. Therefore, when accessing post.author.name, no additional database query is executed.
+
+Equivalent SQL Query:
+```
+from django.db import connection
+query = '''
+    SELECT post.id, post.title, post.content, author.id, author.name
+    FROM post
+    INNER JOIN author ON post.author_id = author.id
+'''
+posts = Post.objects.raw(query)
+```
+In general, for most common use cases, relying on Django's ORM and using select_related provides a more efficient and convenient way to fetch related objects compared to writing raw SQL queries.
+
+## prefetch_related: It fetches all the related objects and caches them in memory, reducing the overall database hits. This method is useful when you are dealing with many-to-many relationships or reverse foreign key relationships.
+```
+# Fetch all authors with their associated posts using prefetch_related
+authors = Author.objects.prefetch_related('post_set').all()
+
+# Access the posts of each author
+for author in authors:
+    print(f"Author: {author.name}")
+    for post in author.post_set.all():
+        print(f"Post: {post.title}")
+Output:
+Author: John Doe
+Post: Post 1 by John
+Post: Post 2 by John
+Author: Jane Smith
+Post: Post 1 by Jane
+Post: Post 2 by Jane
+```
+In this example, prefetch_related('post_set') fetches all the posts associated with each author. The related posts are cached in memory, allowing efficient access without additional database queries. Therefore, when accessing author.post_set.all(), no extra database query is executed.
+
+Eqivalent SQL Query:
+```
+from django.db import connection
+
+query = '''
+    SELECT author.id, author.name, post.id, post.title, post.content
+    FROM author
+    LEFT JOIN post ON author.id = post.author_id
+    ORDER BY author.id;
+'''
+posts = Post.objects.raw(query)
+```
+
+
+
+
+
+
 
 ## Query
 ```
