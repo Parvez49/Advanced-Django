@@ -15,6 +15,8 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [Gmail Validation](#Gmail-Validation)
     - [Gmail Send](#Gmail-Send)
     - [Databases](#Databases)
+        - [MySQL](#Django-MySQL) 
+        - [PostgreSQL](#Django-PostgreSQL) 
     - [RequirementFile](#Requirement.txt)
     - [pip command](#PIP-Command)
  
@@ -420,7 +422,45 @@ sudo systemctl enable postgresql-15
 sudo systemctl start postgresql-15
 sudo systemctl stop postgresql-15
 sudo systemctl restart postgresql-15
+```
 
+
+## Django-PostgreSQL
+```
+Firstly install mysql (pip instal mysqlclient)
+mysql --version
+sudo dnf install mysql-server
+sudo systemctl start "mysqld"  fedora uses mariadb.service instead of mysqld
+sudo systemctl enable mysqld
+sudo mysql_secure_installation
+mysql -u root -p OR sudo mysql
+
+pip install mysql
+pip install mysql-connector-python
+pip install mysql-connector
+```
+###setting.py:
+```
+  DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+```
+to
+```
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": 'db',
+        "USER":  'root',
+        'PASSWORD': 'password789'
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+```
 
 
 
