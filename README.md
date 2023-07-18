@@ -19,6 +19,8 @@ django: Django is a free and open-source, Python-based web framework that follow
         - [PostgreSQL](#Django-PostgreSQL) 
     - [RequirementFile](#Requirement.txt)
     - [pip command](#PIP-Command)
+    - [Git](#Git)
+    - [Interview Question](#Interview-Question)
  
 
 
@@ -463,7 +465,7 @@ DATABASES = {
 ```
 
 # Git
-
+```
 git init --> The git init command creates a new Git repository.
 git config --global user.name "Name"  --> Git uses a username to associate commits with an identity.
 git config --global user.email "user@example.com"
@@ -475,14 +477,16 @@ git commit
 
 git diff README --> Git tracks the changes and displays that the file has been modified.
 git log  --> Git log command shows the commit history of the repository.
-
-
+```
+Git Branch
+```
 git branch improve-output --> create a branch named improve-output.
 git checkout improve-output --> Move to the improve-output branch from the master branch.
 git add food_count.py
 git revert [commit-ID]  --> revert back the previous commit from [commit-ID]
 
 Merge operation
+
 git checkout master --> switch to the master branch from the current branch improve-output branch
 git merge improve-output
 
@@ -492,8 +496,9 @@ git commit
 git push origin main
 # If some changes in github directory
 git pull origin main -->  pull the current snapshot/commit in the remote repository to the local repository. This opens an editor that asks you to enter a commit message for the merge operation.
-
+```
 Forking and detect function behavior:
+```
 click Fork
 git clone https://github.com/[git-username]/it-cert-automation-practice.git
 git remote -v
@@ -502,7 +507,11 @@ Setting the upstream for a fork:
 git remote add upstream https://github.com/[git-username]/it-cert-automation-practice.git
 git push origin branch_name
 Now make a pull request
+```
 
+
+# Interview Question:
+1. Difference between authentication and authorization: Authentication is: "Who are you?" and Authorization is: "What are you allowed to do?". Authentication is the process of verifying the identity of a user, while authorization is the process of granting or denying access rights and permissions based on that authenticated identity.
 
 
 
