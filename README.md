@@ -40,11 +40,11 @@ class ExampleModel(models.Model):
 // auto_now: automatically set to the current date every time the object is saved.
 // auto_now_add: automatically set to the current date when the object is first created.
     datetime_field = models.DateTimeField(auto_now=True, auto_now_add=True, null=True, blank=True)
-    decimal_field = models.DecimalField(max_digits=5, decimal_places=2)
+    decimal_field = models.DecimalField(max_digits=10, decimal_places=2) // 567.89 (2 digits after the decimal point)
     duration_field = models.DurationField()
     email_field = models.EmailField(max_length=254, null=True, blank=True)
     file_field = models.FileField(upload_to='files/', max_length=100) // max_length: The maximum length of the file path.
-    float_field = models.FloatField(null=True, blank=True, default=0.0)
+    float_field = models.FloatField(null=True, blank=True, default=0.0) // we cannot set the decimal_places attribute in a FloatField in Django.
     image_field = models.ImageField(upload_to='images/', max_length=100)
     integer_field = models.IntegerField(null=True, blank=True, default=0)
     positive_integer_field = models.PositiveIntegerField(null=True, blank=True, default=0)
@@ -512,6 +512,10 @@ Now make a pull request
 
 # Interview Question:
 1. Difference between authentication and authorization: Authentication is: "Who are you?" and Authorization is: "What are you allowed to do?". Authentication is the process of verifying the identity of a user, while authorization is the process of granting or denying access rights and permissions based on that authenticated identity.
+2. Django management script: A Django management script is a script that allows you to run code and perform various tasks outside of the typical request/response cycle of a Django web application. These management scripts are typically used for administrative purposes, such as database management, data migration, creating or deleting objects, running periodic tasks, and other maintenance operations.
+
+Example: python manage.py startapp myapp,python manage.py migrate, runserver, createsuperuser etc. These management scripts are helpful in automating various routine tasks and are often used in combination with tools like Celery to schedule periodic tasks, such as sending emails or performing data cleanup at regular intervals.
+3. 
 
 
 
