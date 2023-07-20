@@ -14,6 +14,12 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [Social Authentication](#Social-Authentication)
     - [Gmail Validation](#Gmail-Validation)
     - [Gmail Send](#Gmail-Send)
+    - [Cookie](#Cookie)
+    - [Session](#Session)
+    - [Caching](#Caching)
+        - [MemcachedCache](#MemcachedCache)
+        - [RedisCache](#RedisCache)
+    - [Cookie](#Cookie)
     - [Databases](#Databases)
         - [MySQL](#Django-MySQL) 
         - [PostgreSQL](#Django-PostgreSQL) 
@@ -351,7 +357,15 @@ EMAIL_HOST_PASSWORD = "apppasswordsFromGmailAccountSetting"
 ```
 Code for sending gmail:
 ```
-from django.core.mail import send_mail
+from django.core.mail import send_mail# Storing shopping cart contents in the session
+request.session['cart'] = {
+    'items': [
+        {'id': 1, 'name': 'Product 1', 'price': 10.99},
+        {'id': 2, 'name': 'Product 2', 'price': 19.99},
+        # ...
+    ],
+    'total': 30.98
+}
 from django.conf import settings
 subject = '____'
     message = "_________"
@@ -359,6 +373,257 @@ subject = '____'
     recipient_list = [email]
     send_mail(subject, message , email_from ,recipient_list )
 ```
+
+# Cookie
+Cookies are small pieces of data that are stored on the client's web browser. They are used to store information about the user or their interactions with the website.  Here are some examples of the types of data commonly stored in cookies: User-specific data(username, user ID, or any other user-specific identifier), Session-related data(session ID), Authentication-related data(remember me), Tracking and analytics data etc.
+```
+from django.http import HttpResponse
+
+def set_cookie_view(request):
+    response = HttpResponse("Cookie has been set.")
+    response.set_cookie('username', 'john', max_age=3600)  # Set a cookie named 'username' with value 'john' and a maximum age of 1 hour
+    return response
+
+def get_cookie_view(request):
+    username = request.COOKIES.get('username')  # Retrieve the value of the 'username' cookie
+    return HttpResponse(f"The username from the cookie is: {username}")
+...
+response.delete_cookie('username')
+...
+```
+It's important to note that cookies have a limited storage capacity (typically around 4KB) and should not be used to store large amounts of data. Additionally, since cookies are stored on the client-side, they are inherently less secure than storing sensitive data on the server-side using sessions or databases. Therefore, it's recommended to avoid storing sensitive or confidential information directly in cookies.
+
+
+# Session
+Sessions in Django are a way to store and retrieve arbitrary data for each individual user across multiple requests. Unlike cookies, the session data is stored on the server side, and only a session ID is sent to the client as a cookie.
+
+To implement sessions in a Django project:
+Configure Django's session settings:
+```
+# settings.py
+
+# Add 'django.contrib.sessions' to the INSTALLED_APPS list
+INSTALLED_APPS = [
+    'django.contrib.sessions',
+]
+
+# Configure the session middleware
+MIDDLEWARE = [
+    'django.contrib.sessions.middleware.SessionMiddleware',
+]
+```
+Save and retrieve session data:
+```
+# views.py
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+
+def login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        # Perform authentication logic (e.g., verify credentials)
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            request.session['user_id'] = user.id
+            return redirect('dashboard')
+        else:
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+    else:
+        return render(request, 'login.html')
+
+def dashboard(request):
+    user_id = request.session.get('user_id')
+    if user_id:
+        user = User.objects.get(id=user_id)
+        return render(request, 'dashboard.html', {'user': user})
+    else:
+        return redirect('login')
+
+def logout(request):
+    del request.session['user_id']
+    return redirect('login')
+```
+Other use of session:
+```
+# Storing user preferences in the session
+request.session['preferences'] = {
+    'theme': 'dark',
+    'language': 'en',
+    'timezone': 'UTC'
+}
+```
+Let's consider an e-commerce website where users can add products to their cart and proceed to checkout. To implement this, we can leverage the power and flexibility of sessions.
+```
+# views.py
+
+from django.shortcuts import render, redirect
+
+def add_to_cart(request, product_id):
+    product = get_product_by_id(product_id)
+    if product:
+        cart = request.session.get('cart', {})
+        if product_id in cart:
+            cart[product_id]['quantity'] += 1
+        else:
+            cart[product_id] = {
+                'product': product,
+                'quantity': 1
+            }
+        request.session['cart'] = cart
+        return redirect('cart')
+    else:
+        return redirect('products')
+
+def cart(request):
+    cart = request.session.get('cart', {})
+    total_items = sum(item['quantity'] for item in cart.values())
+    return render(request, 'cart.html', {'cart': cart, 'total_items': total_items})
+
+def checkout(request):
+    cart = request.session.get('cart', {})
+    if request.method == 'POST':
+        # Process the checkout and complete the order
+        # ...
+        # Clear the cart from the session after successful checkout
+        del request.session['cart']
+        return redirect('order_confirmation')
+    else:
+        return render(request, 'checkout.html', {'cart': cart})
+```
+This example demonstrates the power and flexibility of sessions in managing user-specific data and complex workflows in a Django project.
+
+# Caching 
+is used as a performance optimization technique to store frequently accessed data in a faster and more easily accessible location, such as memory, in order to reduce the need for repeated expensive computations or database queries.
+Here are a few reasons why caching is used: Reduced load on the database, Improved performance
+
+## Caching Technique
+
+1. MemcachedCache:
+django.core.cache.backends.memcached.MemcachedCache uses the Memcached caching system to store cached data. Memcached is a high-performance, distributed caching system that can be shared across multiple servers. It's suitable for production environments that require a scalable and distributed cache.
+To use the MemcachedCache backend in Django:
+Install required packages:
+```
+pip install python-memcached
+```
+Configure Django settings:
+```
+# settings.py
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',  # Replace with your Memcached server address
+    }
+}
+```
+Use caching in your views:
+```
+from django.core.cache import cache
+from .models import Product
+
+def get_products():
+    products = cache.get('products')
+    if products is None:
+        # Products not found in the cache, fetch them from the database
+        products = Product.objects.all()
+        # Store products in the cache for future requests with a cache timeout of 1 hour
+        cache.set('products', products, timeout=3600)
+    return products
+
+def products_view(request):
+    products = get_products()
+    return render(request, 'products.html', {'products': products})
+```
+Clearing the cache:
+```
+# Clear a specific cache entry
+cache.delete('products')
+
+# Clear the entire cache
+cache.clear()
+```
+
+2. RedisCache:
+an in-memory data structure store, as the caching backend. Redis is known for its speed, flexibility, and advanced features.
+
+It's important to note that sessions and caching serve different purposes. Sessions are primarily used for user-specific data and maintaining state, while caching is focused on improving performance by storing frequently accessed or computationally expensive data. 
+To implement RedisCache as the cache backend in Django:
+Install the required packages:
+```
+pip install redis
+```
+Configure the cache backend:
+```
+# settings.py
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://localhost:6379/0',  # Replace with your Redis server details
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+```
+Use RedisCache in your views:
+```
+from django.core.cache import cache
+
+def get_products():
+    products = cache.get('products')
+    if products is None:
+        # Products not found in the cache, fetch them from the database
+        products = Product.objects.all()
+        # Store products in the cache for future requests
+        cache.set('products', products, timeout=3600)  # Cache for 1 hour
+    return products
+
+def products_view(request):
+    products = get_products()
+    return render(request, 'products.html', {'products': products})
+```
+Clearing the Redis cache:
+```
+from django.core.cache import cache
+cache.clear()
+```
+
+
+
+# Json Web Token
+```
+pip install PyJWT
+```
+```
+import jwt
+import datetime
+
+payload = {
+    'id': user.id,
+    'username': user.username,
+    'role': user.role,
+    'is_active': user.is_active,
+    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+    'iat': datetime.datetime.utcnow()
+}
+
+secret_key = 'your-secret-key'  # Replace with your actual secret key
+algorithm = 'HS256'  # Specify the desired algorithm for signing the token
+
+token = jwt.encode(payload, secret_key, algorithm=algorithm)
+
+...
+payload = jwt.decode(token, secret_key, algorithms=['HS256'])
+...
+```
+The payload in a JWT can contain any number of fields as needed for your application.
+
+
+
+
 
 ## Requirement.txt
 This automatically create requirement.txt in project.
