@@ -494,6 +494,27 @@ def checkout(request):
 ```
 This example demonstrates the power and flexibility of sessions in managing user-specific data and complex workflows in a Django project.
 
+In Django, the default behavior is that session data is not automatically deleted when a user logs out. The session data is maintained on the server and will persist until its expiration time is reached or until it is explicitly cleared.
+The Django session framework provides options to control the behavior of session data upon user logout:
+Expire on browser close:
+```
+# settings.py
+# Session expires when the user closes the browser
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+```
+Custom expiration time:
+```
+# settings.py
+# Set session timeout to 1 hour (in seconds)
+SESSION_COOKIE_AGE = 3600
+```
+Manual deletion:
+```
+# Clear the session data upon logout
+    request.session.clear()
+    logout(request)
+```
+
 # Caching 
 is used as a performance optimization technique to store frequently accessed data in a faster and more easily accessible location, such as memory, in order to reduce the need for repeated expensive computations or database queries.
 Here are a few reasons why caching is used: Reduced load on the database, Improved performance
