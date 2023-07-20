@@ -19,7 +19,8 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [Caching](#Caching)
         - [MemcachedCache](#MemcachedCache)
         - [RedisCache](#RedisCache)
-    - [Cookie](#Cookie)
+    - [Celery](#Celery)
+    - [Json Web Token](#JWT)
     - [Databases](#Databases)
         - [MySQL](#Django-MySQL) 
         - [PostgreSQL](#Django-PostgreSQL) 
@@ -90,6 +91,8 @@ class Customer(models.Model):
     name = models.CharField(max_length=100)
     tags = models.ManyToManyField(Tag)
 ```
+
+
 # Select Related and Prefetch Related 
 Let's assume you have two models: Author and Post, where each Post has a foreign key relationship with an author.
 ```
@@ -110,7 +113,8 @@ class Post(models.Model):
         return self.title
 
 ```
-## select_related: is used to fetch related objects in a single database query by performing a join operation. It follows foreign keys and retrieves the related objects. This method is useful when you know that you will access the related objects and want to minimize database queries.
+## select_related: 
+is used to fetch related objects in a single database query by performing a join operation. It follows foreign keys and retrieves the related objects. This method is useful when you know that you will access the related objects and want to minimize database queries.
 ```
 # Fetch all posts with their associated authors using select_related
 posts = Post.objects.select_related('author').all()
@@ -170,9 +174,6 @@ query = '''
 '''
 posts = Post.objects.raw(query)
 ```
-
-
-
 
 
 
@@ -614,7 +615,8 @@ cache.clear()
 
 
 
-# Json Web Token
+# JWT
+Json Web Token
 ```
 pip install PyJWT
 ```
@@ -643,6 +645,108 @@ payload = jwt.decode(token, secret_key, algorithms=['HS256'])
 The payload in a JWT can contain any number of fields as needed for your application.
 
 
+# Celery
+is an open-source, distributed task queue that is widely used in Python applications, including Django. It allows you to perform tasks asynchronously, meaning that instead of processing the task immediately, the task is added to a queue to be executed later. This is especially useful for time-consuming or resource-intensive tasks, such as sending emails, processing large files, or performing external API calls, without blocking the main application.
+```
+pip install celery
+```
+configure Celery in your Django settings:
+```
+# settings.py
+# Celery settings
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+```
+In the Django settings.py file, the CELERY_BROKER_URL setting defines the URL of the message broker that Celery will use. The message broker is responsible for handling the communication between the application and the Celery workers.
+
+In this example, we are using Redis as the message broker, which will be responsible for managing the message queue.
+Now, let's create a task that sends an email using Celery:
+```
+# tasks.py
+
+from django.core.mail import send_mail
+from celery import shared_task
+
+@shared_task
+def send_email_task(subject, message, from_email, recipient_list):
+    send_mail(subject, message, from_email, recipient_list)
+```
+In this example, we've defined a Celery task called send_email_task, which takes the necessary parameters to send an email using Django's send_mail function.
+
+Finally, let's trigger the Celery task from a view in our Django application:
+```
+# views.py
+from django.shortcuts import render
+from .tasks import send_email_task
+
+def send_email_view(request):
+    # Your view logic here...
+
+    # Assume we have the following data
+    subject = "Hello from Django and Celery!"
+    message = "This is an asynchronous email sent using Celery."
+    from_email = "sender@example.com"
+    recipient_list = ["recipient@example.com"]
+
+    # Trigger the Celery task
+    send_email_task.delay(subject, message, from_email, recipient_list)
+
+    # Return the response to the user
+    return render(request, 'success.html')
+```
+The task is added to the Celery queue and will be executed in the background.
+
+Now, when a user submits the email form, they will receive an immediate response, and the email will be sent asynchronously in the background using Celery, allowing the application to be more responsive and scalable.
+
+Another Example:
+Next, let's create the Celery task for processing the CSV file:
+```
+# tasks.py
+import csv
+from celery import shared_task
+from .models import SalesData
+
+@shared_task
+def process_csv_file_task(file_path):
+    with open(file_path, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        # Skip header row
+        next(reader)
+
+        for row in reader:
+            # Process each row of data and save it to the database
+            sales_data = SalesData(
+                date=row[0],
+                product=row[1],
+                amount=float(row[2]),
+                quantity=int(row[3])
+            )
+            sales_data.save()
+```
+Now, let's handle the CSV file upload in a Django view:
+```
+# views.py
+
+from django.shortcuts import render
+from .tasks import process_csv_file_task
+
+def upload_csv_view(request):
+    if request.method == 'POST' and request.FILES['csv_file']:
+        # Get the uploaded file from the request
+        csv_file = request.FILES['csv_file']
+
+        # Save the uploaded file to a temporary location
+        with open('temp.csv', 'wb') as temp_file:
+            for chunk in csv_file.chunks():
+                temp_file.write(chunk)
+
+        # Trigger the Celery task to process the CSV file asynchronously
+        process_csv_file_task.delay('temp.csv')
+
+        return render(request, 'success.html')
+    
+    return render(request, 'upload.html')
+```
+By using Celery, the file processing happens in the background, allowing the user to receive an immediate response and continue using the application. Meanwhile, Celery takes care of processing the uploaded CSV file, and the user can check the results later or receive notifications when the task is completed. 
 
 
 
@@ -801,7 +905,13 @@ Now make a pull request
 2. Django management script: A Django management script is a script that allows you to run code and perform various tasks outside of the typical request/response cycle of a Django web application. These management scripts are typically used for administrative purposes, such as database management, data migration, creating or deleting objects, running periodic tasks, and other maintenance operations.
 
 Example: python manage.py startapp myapp,python manage.py migrate, runserver, createsuperuser etc. These management scripts are helpful in automating various routine tasks and are often used in combination with tools like Celery to schedule periodic tasks, such as sending emails or performing data cleanup at regular intervals.
-3. 
+3. Difference between abstract and base class: 
+An abstract class is a class that cannot be instantiated directly, meaning you cannot create objects directly from an abstract class. A base class is a class that other classes can inherit from. It is not necessarily an abstract class; it can be either abstract or concrete.
+The primary purpose of an abstract class is to serve as a blueprint or template for other classes. The purpose of a base class is to provide common attributes and methods that can be shared by its subclasses.
+
+4. The key differences between get() and filter() are:
+   get() returns a single object, while filter() returns a queryset containing multiple objects (even if there's only one result).
+   get() raises exceptions if no object or multiple objects are found, whereas filter() always returns a queryset, even if it's empty.
 
 
 
