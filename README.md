@@ -23,7 +23,8 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [Json Web Token](#JWT)
     - [Databases](#Databases)
         - [MySQL](#Django-MySQL) 
-        - [PostgreSQL](#Django-PostgreSQL) 
+        - [PostgreSQL](#Django-PostgreSQL)
+        - [Redis]{#Redis)
     - [RequirementFile](#Requirement.txt)
     - [pip command](#PIP-Command)
     - [Git](#Git)
@@ -854,7 +855,31 @@ DATABASES = {
 }
 ```
 
+# Redis
+Redis is an open source, advanced key-value store and an apt solution for building highperformance, scalable web applications.
+### String 
+Redis string is a sequence of bytes. Thus, you can store anything up to 512 megabytes in one string.
+>>> SET name "tutorialspoint" 
+>>> redis 127.0.0.1:6379> GET name
+### Hashes
+A Redis hash is a collection of key value pairs. Redis Hashes are maps between string fields and string values. 
+>>>  HMSET user:1 username tutorialspoint password tutorialspoint points 200
+>>> HGETALL user:1
+### Lists
+Redis Lists are simply lists of strings, sorted by insertion order. You can add elements to a Redis List on the head or on the tail.
+>>> lpush tutoriallist redis
+>>> lpush tutoriallist redis2
+>>> lrange tutoriallist 0 10  
+### Sets
+Redis Sets are an unordered collection of strings. In Redis, you can add, remove, and test for the existence of members in O(1) time complexity.
+>>> sadd tutoriallist redis
+>>> sadd tutoriallist redi2
+>>> smembers tutoriallist  
+
+
+
 # Git
+
 ```
 git init --> The git init command creates a new Git repository.
 git config --global user.name "Name"  --> Git uses a username to associate commits with an identity.
