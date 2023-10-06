@@ -24,7 +24,7 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [Databases](#Databases)
         - [MySQL](#Django-MySQL) 
         - [PostgreSQL](#Django-PostgreSQL)
-        - [Redis]{#Redis)
+        - [Redis](#Redis)
     - [RequirementFile](#Requirement.txt)
     - [pip command](#PIP-Command)
     - [Git](#Git)
@@ -860,7 +860,8 @@ Redis is an open source, advanced key-value store and an apt solution for buildi
 ### String 
 Redis string is a sequence of bytes. Thus, you can store anything up to 512 megabytes in one string.
 >>> SET name "tutorialspoint" 
->>> redis 127.0.0.1:6379> GET name
+>>> GET name
+>>> DEL tutorialspoint 
 ### Hashes
 A Redis hash is a collection of key value pairs. Redis Hashes are maps between string fields and string values. 
 >>>  HMSET user:1 username tutorialspoint password tutorialspoint points 200
