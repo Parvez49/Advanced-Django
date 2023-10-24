@@ -28,6 +28,7 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [RequirementFile](#Requirement.txt)
     - [pip command](#PIP-Command)
     - [Git](#Git)
+    - [Docker](#Docker)
     - [Interview Question](#Interview-Question)
  
 
@@ -926,6 +927,19 @@ Setting the upstream for a fork:
 git remote add upstream https://github.com/[git-username]/it-cert-automation-practice.git
 git push origin branch_name
 Now make a pull request
+```
+# Docker
+
+Login Problem using terminal in docker:
+```
+service docker stop
+rm ~/.docker/config.json
+service docker start
+
+now, run
+docker login
+password: access token from dockerhub.
+docker push parvezhossen/multivendorhospital:tagname
 ```
 
 
