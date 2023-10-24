@@ -885,6 +885,8 @@ Redis Sets are an unordered collection of strings. In Redis, you can add, remove
 git init --> The git init command creates a new Git repository.
 git config --global user.name "Name"  --> Git uses a username to associate commits with an identity.
 git config --global user.email "user@example.com"
+
+### cennection between git and github with ssh: https://www.youtube.com/watch?v=iWs34DO_H2M
 git commit -m "This is my second commit."
 
 git status
@@ -900,6 +902,7 @@ git branch improve-output --> create a branch named improve-output.
 git checkout improve-output --> Move to the improve-output branch from the master branch.
 git add food_count.py
 git revert [commit-ID]  --> revert back the previous commit from [commit-ID]
+
 
 Merge operation
 
