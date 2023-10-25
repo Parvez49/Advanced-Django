@@ -29,6 +29,7 @@ django: Django is a free and open-source, Python-based web framework that follow
     - [pip command](#PIP-Command)
     - [Git](#Git)
     - [Docker](#Docker)
+    - [AWS](#AWS)
     - [Interview Question](#Interview-Question)
  
 
@@ -941,7 +942,9 @@ docker login
 password: access token from dockerhub.
 docker push parvezhossen/multivendorhospital:tagname
 ```
-
+# AWS
+sudo apt-get update   # Ubunto update
+sudo apt install python3-pip -y
 
 # Interview Question:
 1. Difference between authentication and authorization: Authentication is: "Who are you?" and Authorization is: "What are you allowed to do?". Authentication is the process of verifying the identity of a user, while authorization is the process of granting or denying access rights and permissions based on that authenticated identity.
