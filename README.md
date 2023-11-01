@@ -7,6 +7,7 @@ django: Django is a free and open-source, Python-based web framework that follow
 - [Advanced Django](#advanced-django)
     - [Form submission without reload](https://github.com/Parvez49/Advanced_Django)
     - [Django Rest API](https://github.com/Parvez49/Advanced_Django)
+    - [Static](#Static)
     - [Model](#Model)
     - [Query](#Query)
         - [select related and prefetch_related](#Select-Related-and-Prefetch-Related)
@@ -36,6 +37,11 @@ django: Django is a free and open-source, Python-based web framework that follow
 
 ## Admin interface
 
+## Static File
+    - STATIC_ROOT is useless during development, it's only required for deployment. The absolute path to the directory where collectstatic will collect static files for deployment.
+    - STATICFILES_DIRS is used to include additional directories for collectstatic to look for.
+    
+    
 ## Model
 ```
 from django.db import models
