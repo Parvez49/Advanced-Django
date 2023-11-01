@@ -946,6 +946,70 @@ docker push parvezhossen/multivendorhospital:tagname
 sudo apt-get update   # Ubunto update
 sudo apt install python3-pip -y
 
+Instance EC2 (Elastic Compute Cloud)
+```
+Launch an instance --> Name: MultivendorHospital --> OS Image(Amazon Machine Image (AMI)): Ubuntu --> Instance type: t2.micro(free) --> Key pair: without          -->
+                                                                                                                                    --> Key pair: with -->key Name --> Secuirity Group --> Launch
+```
+
+Connect EC2 instance from linux: download .pem key pair file --> terminal: 
+```
+chmod 400 ubuntu_os_key.pem --> ssh -i "ubuntu_os_key.pem" ubuntu@ec2-18-143-93-233.ap-southeast-1.compute.amazonaws.com
+```
+### storage with EC2 --> EBS(Elastic Block Storage)
+
+terminal command for attaching a disk(EBS) with instance
+    - sudo su --> for root user
+    - cd
+```
+    - Firstly attach disk with instance by disk actions
+    now in terminal to configure disk with instance
+
+    - df -hT --> to show instance disk information
+    - lsblk  --> list of all disk list connected or not connected
+    - fdisk -l --> list of all disk list connected or not connected
+    - fdisk "disk_name" --> example: fdisk /dev/xvdb --> to connect disk with instance
+        - n --> for new partition
+            - p --> primary partition
+            - e --> extended partition
+        - w --> save partition
+    - mkfs -t xfs /dev/xvdb1  --> make format of disk
+    - mkdir "dir_name" --> to mount disk in linux
+    - mount /dev/xvdb1 dir_name
+```
+### Encription of existing volume:
+    - make snapshot --> create volume from snapshot with encryption --> delete previous volume
+
+### EFS(Elastic File Storage)
+    - only for linux
+    - provide common storage for different region instance
+
+    
+### S3(Simple Storage Service)
+    - object based service --> support any file
+    - not support OS in it.
+    - max 100 bucket(5TB)
+    - bucket name globally unique
+    - not support to change bucket name
+    - bucket version enable possible but not disable
+    
+    - Type:
+        - S3 standard --> daily use
+        - S3 standard-Infrequent Access --> 2/3 times daily or not daily uses
+        - S3 Glacier --> 3/4 times in a year
+        - 
+    
+AMI: Amazon Machine Image --> Clone of existing instance. set instance actions to Image.
+
+
+
+
+
+
+
+
+
+
 # Interview Question:
 1. Difference between authentication and authorization: Authentication is: "Who are you?" and Authorization is: "What are you allowed to do?". Authentication is the process of verifying the identity of a user, while authorization is the process of granting or denying access rights and permissions based on that authenticated identity.
 2. Django management script: A Django management script is a script that allows you to run code and perform various tasks outside of the typical request/response cycle of a Django web application. These management scripts are typically used for administrative purposes, such as database management, data migration, creating or deleting objects, running periodic tasks, and other maintenance operations.
