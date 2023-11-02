@@ -75,6 +75,12 @@ class ExampleModel(models.Model):
     def __str__(self):
         return f"Example Model {self.pk}"
 ```
+```
+Media Image File
+def media_location(instance,filename):
+    return f'folder/{}/{}/.format(instance.id,filename)
+image=model.ImageField(upload_to=medial_location)
+```
 Relationships between models (one-to-one, one-to-many, many-to-many):
 - One-to-One Relationship: In a one-to-one relationship, each Employee has exactly one EmployeeProfile.
 ```
@@ -1004,7 +1010,9 @@ terminal command for attaching a disk(EBS) with instance
         - S3 standard-Infrequent Access --> 2/3 times daily or not daily uses
         - S3 Glacier --> 3/4 times in a year
         - 
-    
+django s3 setup: https://testdriven.io/blog/storing-django-static-and-media-files-on-amazon-s3/
+django RDS(Postgres): https://www.youtube.com/watch?v=Qlwv7FzHADM&t=617s
+django + EC2 + RDS + S3: https://www.youtube.com/watch?v=LaoYcQsPyD8
 AMI: Amazon Machine Image --> Clone of existing instance. set instance actions to Image.
 
 
